@@ -1,80 +1,50 @@
-type ErrorProcessing<E, D> = (error: E) => D;
-type ErrorProcessingAsync<E, D> = (error: E) => Promise<D>;
+export class Result<DataType, ErrorType> {
+  protected readonly data: DataType;
+  protected readonly error: ErrorType;
 
-export class Result<E, D> {
-  protected readonly error: E | null;
-  protected readonly data: D;
-
-  constructor(error: E | null = null, data: D) {
-    this.error = error;
+  constructor(data: DataType, error: ErrorType) {
     this.data = data;
+    this.error = error;
+  }
+}
+
+export class ResultOK<DataType> extends Result<DataType, undefined> {
+  constructor(data: DataType) {
+    super(data, void 0);
   }
 
-  unwrap(): D | never {
-    if (this.error !== null) {
-      throw this.error;
-    }
+  unwrap(): DataType {
     return this.data;
-  }
-
-  unwrapAsync(): Promise<D | E> {
-    if (this.error !== null) {
-      return Promise.reject(this.error);
-    }
-    return Promise.resolve(this.data);
-  }
-
-  onError(func: ErrorProcessing<E, D>): D {
-    if (this.error !== null) {
-      return func(this.error);
-    }
-    return this.data;
-  }
-
-  onErrorAsync(func: ErrorProcessingAsync<E, D>): Promise<D> {
-    if (this.error !== null) {
-      return func(this.error);
-    }
-    return Promise.resolve(this.data);
   }
 
   isOk(): boolean {
-    return this.error === null;
+    return true;
   }
 
   isFail(): boolean {
-    return this.error !== null;
+    return false;
   }
 }
 
-export class ResultOK<D> extends Result<null, D> {
-  constructor(data: D) {
-    super(null, data);
-  }
-
-  unwrap(): D {
-    return this.data;
-  }
-
-  unwrapAsync(): Promise<D> {
-    return Promise.resolve(this.data);
-  }
-}
-
-export class ResultFAIL<E> extends Result<E, undefined> {
-  constructor(error: E) {
-    super(error, void 0);
+export class ResultFAIL<ErrorType> extends Result<undefined, ErrorType> {
+  constructor(error: ErrorType) {
+    super(void 0, error);
   }
 
   unwrap(): never {
     throw this.error;
   }
 
-  unwrapAsync(): Promise<E> {
-    return Promise.reject(this.error);
+  isOk(): boolean {
+    return false;
+  }
+
+  isFail(): boolean {
+    return true;
   }
 }
 
-export const ResultOk = <D>(data: D) => new ResultOK(data);
+export const ResultOk = <DataType>(data: DataType) => new ResultOK(data);
 
-export const ResultFail = <E>(error: E) => new ResultFAIL(error);
+export const ResultFail = <ErrorType>(error: ErrorType) =>
+  new ResultFAIL(error);
