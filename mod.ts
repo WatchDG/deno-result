@@ -2,6 +2,9 @@ export namespace types {
   export type Result<DataType, ErrorType> =
     | ResultOK<DataType>
     | ResultFAIL<ErrorType>;
+  export type ResultAsync<DataType, ErrorType> = Promise<
+    Result<DataType, ErrorType>
+  >;
 }
 
 export class Result<DataType, ErrorType> {
