@@ -53,10 +53,9 @@ export class ResultFAIL<ErrorType> extends Result<undefined, ErrorType> {
   }
 }
 
-export const ResultOk = <DataType>(data: DataType) => new ResultOK(data);
+export const ok = <DataType>(data: DataType) => new ResultOK(data);
 
-export const ResultFail = <ErrorType>(error: ErrorType) =>
-  new ResultFAIL(error);
+export const fail = <ErrorType>(error: ErrorType) => new ResultFAIL(error);
 
 export function tryCatch<TargetType, DataType, ErrorType>(
   target: TargetType,
@@ -69,10 +68,10 @@ export function tryCatch<TargetType, DataType, ErrorType>(
       if (self instanceof Function) {
         return self.call(this, ...args);
       } else {
-        return ResultFail(new TypeError("Descriptor value is not a function."));
+        return fail(new TypeError("Descriptor value is not a function."));
       }
     } catch (error) {
-      return ResultFail(error);
+      return fail(error);
     }
   };
   return descriptor;
@@ -89,10 +88,10 @@ export function tryCatchAsync<TargetType, DataType, ErrorType>(
       if (self instanceof Function) {
         return await self.call(this, ...args);
       } else {
-        return ResultFail(new TypeError("Descriptor value is not a function."));
+        return fail(new TypeError("Descriptor value is not a function."));
       }
     } catch (error) {
-      return ResultFail(error);
+      return fail(error);
     }
   };
   return descriptor;
