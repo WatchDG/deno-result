@@ -48,3 +48,51 @@ export const ResultOk = <DataType>(data: DataType) => new ResultOK(data);
 
 export const ResultFail = <ErrorType>(error: ErrorType) =>
   new ResultFAIL(error);
+
+export function tryCatch<TargetType, DataType, ErrorType>(
+  target: TargetType,
+  property: string,
+  descriptor: TypedPropertyDescriptor<
+    (...args: any[]) => DataType | ResultFAIL<ErrorType>
+  >,
+): TypedPropertyDescriptor<
+  (...args: any[]) => DataType | ResultFAIL<ErrorType>
+> {
+  const self = descriptor.value;
+  descriptor.value = function (...args: any[]) {
+    try {
+      if (self instanceof Function) {
+        return self.call(this, ...args);
+      } else {
+        return ResultFail(new TypeError("Descriptor value is not a function."));
+      }
+    } catch (error) {
+      return ResultFail(error);
+    }
+  };
+  return descriptor;
+}
+
+export function tryCatchAsync<TargetType, DataType, ErrorType>(
+  target: TargetType,
+  property: string,
+  descriptor: TypedPropertyDescriptor<
+    (...args: any[]) => Promise<DataType | ResultFAIL<ErrorType>>
+  >,
+): TypedPropertyDescriptor<
+  (...args: any[]) => Promise<DataType | ResultFAIL<ErrorType>>
+> {
+  const self = descriptor.value;
+  descriptor.value = async function (...args: any[]) {
+    try {
+      if (self instanceof Function) {
+        return await self.call(this, ...args);
+      } else {
+        return ResultFail(new TypeError("Descriptor value is not a function."));
+      }
+    } catch (error) {
+      return ResultFail(error);
+    }
+  };
+  return descriptor;
+}
