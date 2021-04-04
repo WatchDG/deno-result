@@ -1,3 +1,9 @@
+export namespace types {
+  export type Result<DataType, ErrorType> =
+    | ResultOK<DataType>
+    | ResultFAIL<ErrorType>;
+}
+
 export class Result<DataType, ErrorType> {
   protected readonly data: DataType;
   protected readonly error: ErrorType;
