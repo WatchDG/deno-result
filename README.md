@@ -10,5 +10,5 @@ export {
     ResultFail,
     ResultOK,
     ResultOk,
-} from "https://deno.land/x/result/mod.ts";
+} from "https://deno.land/x/result@3.1.3/mod.ts";
 ```
