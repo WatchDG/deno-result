@@ -1,11 +1,9 @@
-export namespace types {
-  export type Result<DataType, ErrorType> =
-    | ResultOK<DataType>
-    | ResultFAIL<ErrorType>;
-  export type ResultAsync<DataType, ErrorType> = Promise<
-    Result<DataType, ErrorType>
-  >;
-}
+export type TResult<DataType, ErrorType> =
+  | ResultOK<DataType>
+  | ResultFAIL<ErrorType>;
+export type TResultAsync<DataType, ErrorType> = Promise<
+  TResult<DataType, ErrorType>
+>;
 
 export class Result<DataType, ErrorType> {
   protected readonly data: DataType;
